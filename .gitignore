@@ -2,4 +2,4 @@
 # ignore these files
 #####
 
-data/*.pickle
+data/*
