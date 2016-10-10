@@ -439,6 +439,7 @@ class SelGen(object):
             pickle.dump(model_dict, f)
 #
 
+'''
 class BeamSearch(object):
     #
     def __init__(self, settings):
@@ -450,3 +451,4 @@ class BeamSearch(object):
     def
     #
     #
+'''

@@ -23,7 +23,7 @@ import optimizers
 dtype = theano.config.floatX
 
 class ControlSelGen(object):
-    # This is a seq 2 seq model train_er
+    #
     def __init__(self, settings):
         #
         print "building controller ... "

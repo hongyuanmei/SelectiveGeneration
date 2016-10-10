@@ -42,20 +42,20 @@ def main():
     )
     #
     '''
-    modify here accordingly ... 
+    modify here accordingly ...
     '''
     #
     parser.add_argument(
-        '-m', '--Model', required=True,
+        '-m', '--Model', required=False,
         help='Model to be trained '
     )
     parser.add_argument(
-        '-fd', '--FileData', required=True,
+        '-fd', '--FileData', required=False,
         help='Path of the dataset'
     )
     #
     parser.add_argument(
-        '-d', '--DimLSTM', required=False,
+        '-d', '--DimModel', required=False,
         help='Dimension of LSTM model '
     )
     parser.add_argument(
@@ -87,6 +87,11 @@ def main():
     #
     args = parser.parse_args()
     #
+    if args.Model == None:
+        args.Model = 'selgen'
+    if args.FileData == None:
+        args.FileData = os.path.abspath('./data')
+    #
     if args.TrackPeriod == None:
         args.TrackPeriod = numpy.int32(100)
     else:
@@ -104,46 +109,38 @@ def main():
     else:
         args.Optimizer = args.Optimizer
     #
-    if args.DimLSTM == None:
-        args.DimLSTM = numpy.int32(64)
+    if args.DimModel == None:
+        args.DimModel = numpy.int32(500)
     else:
-        args.DimLSTM = numpy.int32(args.DimLSTM)
+        args.DimModel = numpy.int32(args.DimModel)
     if args.Seed == None:
         args.Seed = numpy.int32(12345)
     else:
         args.Seed = numpy.int32(args.Seed)
     #
-    if 'lstm' in args.FileData:
-        tag_data = 'lstm'
-    else:
-        tag_data = 'hawkes'
-    if args.FilePretrain == None:
-        tag_pretrain = 'no'
-    else:
-        tag_pretrain = 'yes'
     #
     id_process = os.getpid()
     time_current = datetime.datetime.now().isoformat()
     #
-    if 'lstm' in args.Model:
-        tag_model = '_Model='+args.Model+'_Data='+tag_data+'_DimLSTM='+str(args.DimLSTM)+'_Seed='+str(args.Seed)+'_Pretrain='+tag_pretrain+'_SizeBatch='+str(args.SizeBatch)+'_Opt='+args.Optimizer+'_PID='+str(id_process)+'_TIME='+time_current
-    else:
-        tag_model = '_Model='+args.Model+'_Data='+tag_data+'_Seed='+str(args.Seed)+'_Pretrain='+tag_pretrain+'_SizeBatch='+str(args.SizeBatch)+'_Opt='+args.Optimizer+'_PID='+str(id_process)+'_TIME='+time_current
+    tag_model = '_PID='+str(id_process)+'_TIME='+time_current
     #
+    path_track = './tracks/track' + tag_model + '/'
     file_log = os.path.abspath(
-        './logs/log' + tag_model + '.txt'
+        path_track + 'log.txt'
     )
-    path_save = os.path.abspath(
-        './models/models' + tag_model + '/'
+    path_save = path_track
+    command_mkdir = 'mkdir -p ' + os.path.abspath(
+        path_track
     )
+    os.system(command_mkdir)
     #
     ## show values ##
     print ("PID is : %s" % str(id_process) )
     print ("TIME is : %s" % time_current )
+    #
     print ("Model is : %s" % args.Model )
     print ("FileData is : %s" % args.FileData )
-    if 'lstm' in args.Model:
-        print ("DimLSTM is : %s" % str(args.DimLSTM) )
+    print ("DimModel is : %s" % str(args.DimModel) )
     print ("Seed is : %s" % str(args.Seed) )
     print ("FilePretrain is : %s" % args.FilePretrain)
     print ("TrackPeriod is : %s" % str(args.TrackPeriod) )
@@ -151,6 +148,19 @@ def main():
     print ("SizeBatch is : %s" % str(args.SizeBatch) )
     print ("Optimizer is : %s" % args.Optimizer)
     #
+    dict_args = {
+        'PID': id_process,
+        'TIME': time_current,
+        'Model': args.Model,
+        'FileData': args.FileData,
+        'DimModel': args.DimModel,
+        'Seed': args.Seed,
+        'FilePretrain': args.FilePretrain,
+        'TrackPeriod': args.TrackPeriod,
+        'MaxEpoch': args.MaxEpoch,
+        'SizeBatch': args.SizeBatch,
+        'Optimizer': args.Optimizer
+    }
     #
     input_train = {
         'seed_random': args.Seed,
@@ -159,16 +169,18 @@ def main():
         'track_period': args.TrackPeriod,
         'max_epoch': args.MaxEpoch,
         'size_batch': args.SizeBatch,
-        'dim_model': args.DimLSTM,
+        'dim_model': args.DimModel,
         'optimizer': args.Optimizer,
         'save_file_path': path_save,
-        'log_file': file_log
+        'log_file': file_log,
+        'args': dict_args
     }
     #
-    if args.Model == 'hawkes':
-        run_models.train_hawkes_ctsm(input_train)
+    if args.Model == 'selgen':
+        run_models.train_selgen(input_train)
     else:
-        print "Model not implemented yet !!! "
+        print "Model not cleaned up yet ... "
+    #
     #
 
 if __name__ == "__main__": main()

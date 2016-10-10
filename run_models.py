@@ -48,12 +48,19 @@ def train_selgen(input_train):
         'min_dev_loss': 1e6,
         'max_dev_bleu': -1.0,
         #
-        'iteration': 0, 'track_period': input_train['track_period'],
+        #
+        'tracked_best': {},
+        #
+        'iteration': 0,
+        'track_period': input_train['track_period'],
         'max_epoch': input_train['max_epoch'],
         'size_batch': input_train['size_batch'],
         'tracked': {
             'track_cnt': None,
-            'train_loss': None, 'dev_bleu': None,
+            'train_loss': None,
+            #'dev_loss': None,
+            'dev_bleu': None,
+            'dev_F1': None,
             #
             'train_time': None, 'dev_time': None
         }
@@ -94,14 +101,25 @@ def train_selgen(input_train):
     #'''
     print "building Bleu Scorer ... "
     settings_bs = {
-        'path_data': input_train['path_data']
+        'size_beam': 1,
+        'path_model': None,
+        'normalize_mode': True
     }
     beam_search = searchers.BeamSearchSelGen(settings_bs)
     #
-    settings_bleu = {
-
-    }
-    bleu_scorer = evaluations.BlueScore(settings_bleu)
+    #settings_bleu = {
+    #    'path_program': None,
+    #    'path_bleu': input_train['path_bleu']
+    #}
+    bleu_scorer = evaluations.BleuScoreNLTK()
+    bleu_scorer.set_refs(
+        data_process.get_refs(tag_split='dev')
+    )
+    #
+    f1_computer = evaluations.F1Compute()
+    f1_computer.set_golds(
+        data_process.get_golds(tag_split='dev')
+    )
     #
 
     print "model finished, comilation time is ", round(compile_time, 0)
@@ -161,6 +179,7 @@ def train_selgen(input_train):
                 )
                 #
                 bleu_scorer.reset_gens()
+                f1_computer.reset_aligns()
                 #TODO: get the dev loss values
                 sum_costs = 0.0
                 for step_dev in range(data_process.lens['dev']):
@@ -178,6 +197,10 @@ def train_selgen(input_train):
                     beam_search.init_beam()
                     beam_search.search_func()
                     #
+                    f1_computer.add_align(
+                        beam_search.get_top_att()
+                    )
+                    #
                     gen_step_dev = data_process.translate(
                         beam_search.get_top_target()
                     )
@@ -186,9 +209,13 @@ def train_selgen(input_train):
                     print "in dev, the step is out of ", step_dev, data_process.lens['dev']
                 #
                 bleu_score = bleu_scorer.evaluate()
+                f1_score = f1_computer.evaluate()
                 #
                 log_dict['tracked']['dev_bleu'] = round(
                     bleu_score, 2
+                )
+                log_dict['tracked']['dev_F1'] = round(
+                    f1_score, 2
                 )
                 #
                 dev_end = time.time()
@@ -202,11 +229,12 @@ def train_selgen(input_train):
                 if log_dict['tracked']['dev_bleu'] > log_dict['max_dev_bleu']:
                     save_file = os.path.abspath(
                         log_dict['save_file_path']
-                    ) + '/'+'model_'+str(log_dict['tracked']['track_cnt']) + '.pkl'
+                    ) + '/'+'model.pkl'
                     control.save_model(save_file)
                 #
                 data_process.track_log(log_dict)
             ########
+    data_process.finish_log(log_dict)
     print "finish training"
     #
 #
