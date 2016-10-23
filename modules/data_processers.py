@@ -57,8 +57,8 @@ class DataProcesser(object):
         )
         #
         self.dim_lang = self.vocabmat.shape[0]
-        self.dim_info = self.data['train'][0]['info'].shape[1]
-        self.num_info = self.data['train'][0]['info'].shape[0]
+        self.dim_info = self.data['dim_info']
+        self.num_info = self.data['num_info']
         self.size_batch = settings['size_batch']
         #
         self.lens = {
@@ -105,6 +105,367 @@ class DataProcesser(object):
         # we shuffle idx instead of the real data
         numpy.random.shuffle(self.list_idx['train'])
 
+    #
+    #TODO: functions for processing single feature
+    def gettype(self, infoline):
+        typevec = numpy.zeros((12,),dtype=dtype)
+        if infoline['type'] == 'temperature':
+            typevec[0] = 1.
+        elif infoline['type'] == 'windChill':
+            typevec[1] = 1.
+        elif infoline['type'] == 'windSpeed':
+            typevec[2] = 1.
+        elif infoline['type'] == 'windDir':
+            typevec[3] = 1.
+        elif infoline['type'] == 'gust':
+            typevec[4] = 1.
+        elif infoline['type'] == 'skyCover':
+            typevec[5] = 1.
+        elif infoline['type'] == 'precipPotential':
+            typevec[6] = 1.
+        elif infoline['type'] == 'thunderChance':
+            typevec[7] = 1.
+        elif infoline['type'] == 'rainChance':
+            typevec[8] = 1.
+        elif infoline['type'] == 'snowChance':
+            typevec[9] = 1.
+        elif infoline['type'] == 'freezingRainChance':
+            typevec[10] = 1.
+        elif infoline['type'] == 'sleetChance':
+            typevec[11] = 1.
+        else:
+            print "wrong in type"
+        return typevec
+    #
+    def getlabel(self, infoline):
+        labelvec = numpy.zeros((5,),dtype=dtype)
+        if infoline['label'] == 'Tonight':
+            labelvec[0] = 1.
+        elif infoline['label'] == 'Sunday':
+            labelvec[1] = 1.
+        elif infoline['label'] == 'Monday':
+            labelvec[2] = 1.
+        elif infoline['label'] == 'Tuesday':
+            labelvec[3] = 1.
+        elif infoline['label'] == 'Wednesday':
+            labelvec[4] = 1.
+        else:
+            print "wrong in label"
+        return labelvec
+    #
+    def gettime(self, infoline):
+        timevec = numpy.zeros((10,),dtype=dtype)
+        if infoline['time'] == '6-9':
+            timevec[0] = 1.
+        elif infoline['time'] == '6-13':
+            timevec[1] = 1.
+        elif infoline['time'] == '6-21':
+            timevec[2] = 1.
+        elif infoline['time'] == '9-21':
+            timevec[3] = 1.
+        elif infoline['time'] == '13-21':
+            timevec[4] = 1.
+        elif infoline['time'] == '17-21':
+            timevec[5] = 1.
+        elif infoline['time'] == '17-26':
+            timevec[6] = 1.
+        elif infoline['time'] == '17-30':
+            timevec[7] = 1.
+        elif infoline['time'] == '21-30':
+            timevec[8] = 1.
+        elif infoline['time'] == '26-30':
+            timevec[9] = 1.
+        else:
+            print "wrong in time"
+        return timevec
+    #
+    def getnum(self, numstr):
+        # this is used ot get max/mean/min vector
+        # 2^8 is enought for -100 to 100
+        if numstr == '':
+            numvec = numpy.zeros((9,),dtype=dtype)
+            numvec[-1] = 1.
+        else:
+            deci = int(numstr)
+            numvec = numpy.zeros((9,),dtype=dtype)
+            if deci > 0:
+                numbin = bin(deci)
+                binpart = int(numbin[2:])
+                ind = 2
+                while binpart:
+                    numvec[-ind] = (binpart%10)
+                    binpart /= 10
+                    ind += 1
+            elif deci < 0:
+                numvec[0] = 1.
+                numbin = bin(deci)
+                binpart = int(numbin[3:])
+                ind = 2
+                while binpart:
+                    numvec[-ind] = (binpart%10)
+                    binpart /= 10
+                    ind += 1
+            elif deci == 0:
+                pass
+            else:
+                print "wrong in num"
+        return numvec
+    #
+    def getnums(self, minstr, meanstr, maxstr):
+        # used to get max+mean+min vectors
+        minvec = self.getnum(minstr)
+        meanvec = self.getnum(meanstr)
+        maxvec = self.getnum(maxstr)
+        numsvec = numpy.concatenate(
+            (minvec,meanvec, maxvec), axis=0
+        )
+        return numsvec
+    #
+    def gettemp(self, infoline):
+        if infoline['type'] == 'temperature':
+            tempvec = self.getnums(
+                infoline['min'],infoline['mean'],infoline['max']
+            )
+        else:
+            tempvec = self.getnums('','','')
+        return tempvec
+    #
+    def getwindchill(self, infoline):
+        if infoline['type'] == 'windChill':
+            chillvec = self.getnums(
+                infoline['min'],infoline['mean'],infoline['max']
+            )
+        else:
+            chillvec = self.getnums('','','')
+        return chillvec
+    #
+    def getwindspeed(self, infoline):
+        if infoline['type'] == 'windSpeed':
+            windspeedvec = self.getnums(
+                infoline['min'],infoline['mean'],infoline['max']
+            )
+        else:
+            windspeedvec = self.getnums('','','')
+        return windspeedvec
+    #
+    def getbucket20(self, infoline):
+        bucket20vec = numpy.zeros((3,),dtype=dtype)
+        if infoline['mode_bucket_0_20_2'] == '0-10':
+            bucket20vec[0] = 1.
+        elif infoline['mode_bucket_0_20_2'] == '10-20':
+            bucket20vec[1] = 1.
+        elif infoline['mode_bucket_0_20_2'] == '':
+            bucket20vec[2] = 1.
+        else:
+            print "wrong in bucket20"
+        return bucket20vec
+    #
+    def getdirmode(self, infoline):
+        dirvec = numpy.zeros((17,),dtype=dtype)
+        if infoline['type'] == 'windDir':
+            if infoline['mode'] == 'S':
+                dirvec[0] = 1.
+            elif infoline['mode'] == 'SW':
+                dirvec[1] = 1.
+            elif infoline['mode'] == 'SSE':
+                dirvec[2] = 1.
+            elif infoline['mode'] == 'WSW':
+                dirvec[3] = 1.
+            elif infoline['mode'] == 'ESE':
+                dirvec[4] = 1.
+            elif infoline['mode'] == 'E':
+                dirvec[5] = 1.
+            elif infoline['mode'] == 'W':
+                dirvec[6] = 1.
+            elif infoline['mode'] == 'SE':
+                dirvec[7] = 1.
+            elif infoline['mode'] == 'NE':
+                dirvec[8] = 1.
+            elif infoline['mode'] == 'SSW':
+                dirvec[9] = 1.
+            elif infoline['mode'] == 'NNE':
+                dirvec[10] = 1.
+            elif infoline['mode'] == 'WNW':
+                dirvec[11] = 1.
+            elif infoline['mode'] == 'N':
+                dirvec[12] = 1.
+            elif infoline['mode'] == 'NNW':
+                dirvec[13] = 1.
+            elif infoline['mode'] == 'ENE':
+                dirvec[14] = 1.
+            elif infoline['mode'] == 'NW':
+                dirvec[15] = 1.
+            else:
+                print "wrong in dir"
+        else:
+            dirvec[-1] = 1.
+        return dirvec
+    #
+    def getgust(self, infoline):
+        if infoline['type'] == 'gust':
+            ##########################
+            gustvec = self.getnums(
+                infoline['min'],infoline['mean'],infoline['max']
+            )
+        else:
+            gustvec = self.getnums('','','')
+        return gustvec
+    #
+    def getcover(self, infoline):
+        covervec = numpy.zeros((5,),dtype=dtype)
+        if infoline['type'] == 'skyCover':
+            if infoline['mode_bucket_0_100_4'] == '0-25':
+                covervec[0] = 1.
+            elif infoline['mode_bucket_0_100_4'] == '25-50':
+                covervec[1] = 1.
+            elif infoline['mode_bucket_0_100_4'] == '50-75':
+                covervec[2] = 1.
+            elif infoline['mode_bucket_0_100_4'] == '75-100':
+                covervec[3] = 1.
+            else:
+                print "wrong in cover"
+        else:
+            covervec[-1] = 1.
+        return covervec
+    #
+    def getprec(self, infoline):
+        if infoline['type'] == 'precipPotential':
+            precvec = self.getnums(
+                infoline['min'],infoline['mean'],infoline['max']
+            )
+        else:
+            precvec = self.getnums('','','')
+        return precvec
+    #
+    def getthundermode(self, infoline):
+        thundervec = numpy.zeros((6,),dtype=dtype)
+        if infoline['type'] == 'thunderChance':
+            if infoline['mode'] == '--':
+                thundervec[0] = 1.
+            elif infoline['mode'] == 'SChc':
+                thundervec[1] = 1.
+            elif infoline['mode'] == 'Chc':
+                thundervec[2] = 1.
+            elif infoline['mode'] == 'Lkly':
+                thundervec[3] = 1.
+            elif infoline['mode'] == 'Def':
+                thundervec[4] = 1.
+            else:
+                print "wrong in thunder"
+        else:
+            thundervec[-1] = 1.
+        return thundervec
+    #
+    def getrainmode(self, infoline):
+        rainvec = numpy.zeros((6,),dtype=dtype)
+        if infoline['type'] == 'rainChance':
+            if infoline['mode'] == '--':
+                rainvec[0] = 1.
+            elif infoline['mode'] == 'SChc':
+                rainvec[1] = 1.
+            elif infoline['mode'] == 'Chc':
+                rainvec[2] = 1.
+            elif infoline['mode'] == 'Lkly':
+                rainvec[3] = 1.
+            elif infoline['mode'] == 'Def':
+                rainvec[4] = 1.
+            else:
+                print "wrong in rain"
+        else:
+            rainvec[-1] = 1.
+        return rainvec
+    #
+    def getsnowmode(self, infoline):
+        snowvec = numpy.zeros((6,),dtype=dtype)
+        if infoline['type'] == 'snowChance':
+            if infoline['mode'] == '--':
+                snowvec[0] = 1.
+            elif infoline['mode'] == 'SChc':
+                snowvec[1] = 1.
+            elif infoline['mode'] == 'Chc':
+                snowvec[2] = 1.
+            elif infoline['mode'] == 'Lkly':
+                snowvec[3] = 1.
+            elif infoline['mode'] == 'Def':
+                snowvec[4] = 1.
+            else:
+                print "wrong in snow"
+        else:
+            snowvec[-1] = 1.
+        return snowvec
+    #
+    def getfreezmode(self, infoline):
+        freezvec = numpy.zeros((6,),dtype=dtype)
+        if infoline['type'] == 'freezingRainChance':
+            if infoline['mode'] == '--':
+                freezvec[0] = 1.
+            elif infoline['mode'] == 'SChc':
+                freezvec[1] = 1.
+            elif infoline['mode'] == 'Chc':
+                freezvec[2] = 1.
+            elif infoline['mode'] == 'Lkly':
+                freezvec[3] = 1.
+            elif infoline['mode'] == 'Def':
+                freezvec[4] = 1.
+            else:
+                print "wrong in freezvec"
+        else:
+            freezvec[-1] = 1.
+        return freezvec
+    #
+    def getsleetmode(self, infoline):
+        sleetvec = numpy.zeros((6,),dtype=dtype)
+        if infoline['type'] == 'sleetChance':
+            if infoline['mode'] == '--':
+                sleetvec[0] = 1.
+            elif infoline['mode'] == 'SChc':
+                sleetvec[1] = 1.
+            elif infoline['mode'] == 'Chc':
+                sleetvec[2] = 1.
+            elif infoline['mode'] == 'Lkly':
+                sleetvec[3] = 1.
+            elif infoline['mode'] == 'Def':
+                sleetvec[4] = 1.
+            else:
+                print "wrong in sleetChance"
+        else:
+            sleetvec[-1] = 1.
+        return sleetvec
+    #
+    def getinfovec(self, infoline):
+        # typepart
+        typevec = self.gettype(infoline)
+        labelvec = self.getlabel(infoline)
+        timevec = self.gettime(infoline)
+        tempvec = self.gettemp(infoline)
+        chillvec = self.getwindchill(infoline)
+        speedvec = self.getwindspeed(infoline)
+        bucket20vec = self.getbucket20(infoline)
+        dirvec = self.getdirmode(infoline)
+        gustvec = self.getgust(infoline)
+        covervec = self.getcover(infoline)
+        precvec = self.getprec(infoline)
+        thundervec = self.getthundermode(infoline)
+        rainvec = self.getrainmode(infoline)
+        snowvec = self.getsnowmode(infoline)
+        freezvec = self.getfreezmode(infoline)
+        sleetvec = self.getsleetmode(infoline)
+        infovec = numpy.concatenate(
+            (
+                typevec, labelvec, timevec, tempvec, chillvec, speedvec, bucket20vec, dirvec, gustvec, covervec, precvec, thundervec, rainvec, snowvec, freezvec, sleetvec
+            ),axis=0
+        )
+        return infovec
+    #
+    def getinfo(self, rawdata):
+        infomat = []
+        for theid in range(36):
+            infoline = rawdata['id'+str(theid)]
+            infomat.append(self.getinfovec(infoline))
+        return numpy.array(infomat)
+    #
+    #
+
     def process_seq(self):
         #print "getting batch ... "
         #
@@ -115,9 +476,9 @@ class DataProcesser(object):
         self.max_len = -1
         for idx_in_batch, idx_data in enumerate(self.list_idx_data):
             data_item = self.data[self.tag_batch][idx_data]
-            self.seq_info_numpy[:, idx_in_batch, :] = data_item[
-                'info'
-            ]
+            self.seq_info_numpy[:, idx_in_batch, :] = self.getinfo(
+                data_item
+            )
             list_tokens_this_data = data_item['text'].split()
             len_this_data = 0
             for token in list_tokens_this_data:
@@ -198,7 +559,7 @@ class DataProcesser(object):
             dtype = dtype
         )
         #
-        self.seq_info_numpy[:,:] = data_item['info']
+        self.seq_info_numpy[:,:] = self.getinfo(data_item)
         #
         self.seq_lang_numpy = numpy.zeros(
             (self.max_len+1, self.dim_lang), dtype = dtype
