@@ -71,7 +71,7 @@ def train_selgen(input_train):
 
     data_process = data_processers.DataProcesser(
         {
-            'path_data': input_train['path_data'],
+            'path_data': input_train['path_rawdata'],
             'size_batch': input_train['size_batch']
         }
     )
