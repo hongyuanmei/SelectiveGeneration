@@ -376,6 +376,7 @@ class SelGen(object):
                 ), axes = (1,0)
             )
         )
+        # size_batch * num_info
         #
         [h_dec, c_dec, y_dec, log_y_dec], _ = theano.scan(
             fn = self.decoder,
@@ -390,7 +391,7 @@ class SelGen(object):
         #
         cost_term = -tensor.mean(
             tensor.sum(
-                seq_target * log_y_t, [2,0]
+                seq_target * log_y_dec, [2,0]
             )
         )
         #
