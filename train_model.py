@@ -59,6 +59,10 @@ def main():
         help='Dimension of LSTM model '
     )
     parser.add_argument(
+        '-ns', '--NumSel', required=False,
+        help='Number of pre-selection in expectation '
+    )
+    parser.add_argument(
         '-s', '--Seed', required=False,
         help='Seed of random state'
     )
@@ -113,6 +117,10 @@ def main():
         args.DimModel = numpy.int32(500)
     else:
         args.DimModel = numpy.int32(args.DimModel)
+    if args.NumSel == None:
+        args.NumSel = numpy.float32(5.0)
+    else:
+        args.NumSel = numpy.float32(args.NumSel)
     if args.Seed == None:
         args.Seed = numpy.int32(12345)
     else:
@@ -141,6 +149,7 @@ def main():
     print ("Model is : %s" % args.Model )
     print ("FileData is : %s" % args.FileData )
     print ("DimModel is : %s" % str(args.DimModel) )
+    print ("NumSel is : %s" % str(args.NumSel) )
     print ("Seed is : %s" % str(args.Seed) )
     print ("FilePretrain is : %s" % args.FilePretrain)
     print ("TrackPeriod is : %s" % str(args.TrackPeriod) )
@@ -159,6 +168,7 @@ def main():
         'TrackPeriod': args.TrackPeriod,
         'MaxEpoch': args.MaxEpoch,
         'SizeBatch': args.SizeBatch,
+        'NumSel': args.NumSel,
         'Optimizer': args.Optimizer
     }
     #
@@ -173,6 +183,7 @@ def main():
         'optimizer': args.Optimizer,
         'save_file_path': path_save,
         'log_file': file_log,
+        'num_sel': args.NumSel,
         'args': dict_args
     }
     #

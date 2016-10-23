@@ -343,7 +343,7 @@ class SelGen(object):
         seq_info_forward = seq_info
         seq_info_backward = seq_info[::-1,:,:]
         [h_forward, c_forward, h_backward, c_backward], _ = theano.scan(
-            fn = encoder,
+            fn = self.encoder,
             sequences = [
                 dict(input=seq_info_forward, taps=[0]),
                 dict(input=seq_info_backward, taps=[0])
@@ -378,7 +378,7 @@ class SelGen(object):
         )
         #
         [h_dec, c_dec, y_dec, log_y_dec], _ = theano.scan(
-            fn = decoder,
+            fn = self.decoder,
             sequences = dict(input=seq_lang, taps=[0]),
             outputs_info = [
                 dict(initial=self.h_0_mat, taps=[-1]),
