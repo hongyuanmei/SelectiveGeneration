@@ -47,9 +47,13 @@ class ControlSelGen(object):
             settings['optimizer'] == 'adam' or settings['optimizer'] == 'sgd'
         )
         if settings['optimizer'] == 'adam':
-            self.adam_optimizer = optimizers.Adam(adam_params=None)
+            self.adam_optimizer = optimizers.Adam(
+                adam_params=None
+            )
         elif settings['optimizer'] == 'sgd':
-            self.adam_optimizer = optimizers.SGD(adam_params=None)
+            self.adam_optimizer = optimizers.SGD(
+                adam_params=None
+            )
         else:
             print "Choose a optimizer ! "
         #

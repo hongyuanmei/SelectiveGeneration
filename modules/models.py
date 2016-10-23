@@ -26,7 +26,7 @@ class SelGen(object):
     def __init__(self, settings):
         print "initializing Sel Gen model ... "
         self.size_batch = settings['size_batch']
-        self.num_sel = settings['num_sel']
+        self.num_sel = numpy.float32(settings['num_sel'])
         #
         if settings['path_pre_train'] == None:
             self.dim_model = settings['dim_model']
@@ -300,7 +300,9 @@ class SelGen(object):
         pre_tran = tensor.concatenate(
             [x_t_lang, h_tm1_dec, z_t], axis=1
         )
-        post_tran = theano.dot(pre_tran, self.W_dec) + self.b_dec
+        post_tran = theano.dot(
+            pre_tran, self.W_dec
+        ) + self.b_dec
         #
         i_t = tensor.nnet.sigmoid(
             post_tran[:, :self.dim_model]

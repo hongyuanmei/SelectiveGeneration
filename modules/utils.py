@@ -29,4 +29,4 @@ def sample_weights(numrow, numcol):
     _,svs,_ = numpy.linalg.svd(values)
     #svs[0] is the largest singular value
     values = values / svs[0]
-    return values
+    return numpy.float32(values)

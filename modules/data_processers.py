@@ -193,7 +193,9 @@ class DataProcesser(object):
                 binpart = int(numbin[2:])
                 ind = 2
                 while binpart:
-                    numvec[-ind] = (binpart%10)
+                    numvec[-ind] = numpy.float32(
+                        (binpart%10)
+                    )
                     binpart /= 10
                     ind += 1
             elif deci < 0:
@@ -202,7 +204,9 @@ class DataProcesser(object):
                 binpart = int(numbin[3:])
                 ind = 2
                 while binpart:
-                    numvec[-ind] = (binpart%10)
+                    numvec[-ind] = numpy.float32(
+                        (binpart%10)
+                    )
                     binpart /= 10
                     ind += 1
             elif deci == 0:
@@ -303,7 +307,6 @@ class DataProcesser(object):
     #
     def getgust(self, infoline):
         if infoline['type'] == 'gust':
-            ##########################
             gustvec = self.getnums(
                 infoline['min'],infoline['mean'],infoline['max']
             )
@@ -462,7 +465,7 @@ class DataProcesser(object):
         for theid in range(36):
             infoline = rawdata['id'+str(theid)]
             infomat.append(self.getinfovec(infoline))
-        return numpy.array(infomat)
+        return numpy.float32(numpy.array(infomat) )
     #
     #
 
