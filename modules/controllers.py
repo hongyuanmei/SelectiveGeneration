@@ -63,7 +63,7 @@ class ControlSelGen(object):
                 self.seq_info, self.seq_lang, self.seq_target
             ],
             outputs = self.model.cost,
-            updates = self.model.updates
+            updates = self.adam_optimizer.updates
         )
         print "compiling dev function ... "
         self.model_dev = theano.function(
