@@ -359,7 +359,7 @@ class SelGen(object):
         #
         self.scope_att = tensor.concatenate(
             [
-                self.seq_info_forward,
+                seq_info_forward,
                 h_forward, h_backward[::-1, :, :]
             ], axis=2
         )
