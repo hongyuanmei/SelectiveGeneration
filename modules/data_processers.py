@@ -268,7 +268,7 @@ class DataProcesser(object):
         #
         dirvec = numpy.zeros((18, ), dtype=dtype)
         if infoline['type'] == 'windDir':
-            if infoline['mode'] == '': 
+            if infoline['mode'] == '':
                 dirvec[0] = 1.
             elif infoline['mode'] == 'S':
                 dirvec[1] = 1.
@@ -534,7 +534,7 @@ class DataProcesser(object):
         self, tag_batch, idx_batch_current=0
     ):
         #
-        print "processing one batch of data ... "
+        #print "processing one batch of data ... "
         #
         self.tag_batch = tag_batch
         self.list_idx_data = [

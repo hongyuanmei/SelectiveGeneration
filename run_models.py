@@ -148,7 +148,7 @@ def train_selgen(input_train):
                 'train', step_train
             )
             #
-            print "training ... "
+            #print "training ... "
             cost_numpy = control.model_learn(
                 data_process.seq_info_numpy,
                 data_process.seq_lang_numpy,
@@ -192,7 +192,7 @@ def train_selgen(input_train):
                         'dev', step_dev
                     )
                     #
-                    print "validating ... "
+                    #print "validating ... "
                     #
                     beam_search.refresh_state()
                     beam_search.set_encoder(
