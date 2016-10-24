@@ -531,6 +531,7 @@ class DataProcesser(object):
         self, tag_batch, idx_batch_current=0
     ):
         #
+        print "processing one batch of data ... "
         #
         self.tag_batch = tag_batch
         self.list_idx_data = [

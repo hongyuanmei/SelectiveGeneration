@@ -48,7 +48,7 @@ def train_selgen(input_train):
         'min_dev_loss': 1e6,
         'max_dev_bleu': -1.0,
         #
-        'args': input_train['args'], 
+        'args': input_train['args'],
         #
         'tracked_best': {},
         #
@@ -162,7 +162,9 @@ def train_selgen(input_train):
             log_dict['tracked']['train_loss'] = round(err/(step_train+1), 4)
             train_end = time.time()
             log_dict['tracked']['train_time'] = round(
-                (train_end - train_start)*log_dict['track_period'], 0
+                (
+                    train_end - train_start
+                )*log_dict['track_period'], 0
             )
             #
             print "in training, the step is out of ", step_train, data_process.max_nums['train']
