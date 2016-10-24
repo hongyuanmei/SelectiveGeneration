@@ -48,6 +48,7 @@ def train_selgen(input_train):
         'min_dev_loss': 1e6,
         'max_dev_bleu': -1.0,
         #
+        'args': input_train['args'], 
         #
         'tracked_best': {},
         #
