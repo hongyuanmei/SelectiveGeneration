@@ -31,9 +31,13 @@ class BeamSearchSelGen(object):
         print "initializing the beam searcher ... "
         assert (settings['size_beam'] >= 1)
         #assert (settings['path_model'] != None)
-        self.path_model = os.path.abspath(
-            settings['path_model']
-        )
+        #
+        self.path_model = None
+        if settings['path_model'] != None:
+            self.path_model = os.path.abspath(
+                settings['path_model']
+            )
+        #
         self.size_beam = settings['size_beam']
         self.normalize_mode = settings['normalize_mode']
         # whether to normalize the cost over length of sequence
