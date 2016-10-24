@@ -167,7 +167,8 @@ def train_selgen(input_train):
                 )*log_dict['track_period'], 0
             )
             #
-            print "in training, the step is out of ", step_train, data_process.max_nums['train']
+            if step_train % 10 == 9:
+                print "in training, the step is out of ", step_train, data_process.max_nums['train']
             ########
             # Now we track the performance and save the model for every # batches, so that we do not miss the convergence within the epoch -- one epoch is too large sometimes
             ########
@@ -209,7 +210,8 @@ def train_selgen(input_train):
                     )
                     bleu_scorer.add_gen(gen_step_dev)
                     #
-                    print "in dev, the step is out of ", step_dev, data_process.lens['dev']
+                    if step_dev % 100 == 99:
+                        print "in dev, the step is out of ", step_dev, data_process.lens['dev']
                 #
                 bleu_score = bleu_scorer.evaluate()
                 f1_score = f1_computer.evaluate()
