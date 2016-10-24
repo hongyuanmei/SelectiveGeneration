@@ -265,40 +265,43 @@ class DataProcesser(object):
         return bucket20vec
     #
     def getdirmode(self, infoline):
-        dirvec = numpy.zeros((17,),dtype=dtype)
+        #
+        dirvec = numpy.zeros((18, ), dtype=dtype)
         if infoline['type'] == 'windDir':
-            if infoline['mode'] == 'S':
+            if infoline['mode'] == '': 
                 dirvec[0] = 1.
-            elif infoline['mode'] == 'SW':
+            elif infoline['mode'] == 'S':
                 dirvec[1] = 1.
-            elif infoline['mode'] == 'SSE':
+            elif infoline['mode'] == 'SW':
                 dirvec[2] = 1.
-            elif infoline['mode'] == 'WSW':
+            elif infoline['mode'] == 'SSE':
                 dirvec[3] = 1.
-            elif infoline['mode'] == 'ESE':
+            elif infoline['mode'] == 'WSW':
                 dirvec[4] = 1.
-            elif infoline['mode'] == 'E':
+            elif infoline['mode'] == 'ESE':
                 dirvec[5] = 1.
-            elif infoline['mode'] == 'W':
+            elif infoline['mode'] == 'E':
                 dirvec[6] = 1.
-            elif infoline['mode'] == 'SE':
+            elif infoline['mode'] == 'W':
                 dirvec[7] = 1.
-            elif infoline['mode'] == 'NE':
+            elif infoline['mode'] == 'SE':
                 dirvec[8] = 1.
-            elif infoline['mode'] == 'SSW':
+            elif infoline['mode'] == 'NE':
                 dirvec[9] = 1.
-            elif infoline['mode'] == 'NNE':
+            elif infoline['mode'] == 'SSW':
                 dirvec[10] = 1.
-            elif infoline['mode'] == 'WNW':
+            elif infoline['mode'] == 'NNE':
                 dirvec[11] = 1.
-            elif infoline['mode'] == 'N':
+            elif infoline['mode'] == 'WNW':
                 dirvec[12] = 1.
-            elif infoline['mode'] == 'NNW':
+            elif infoline['mode'] == 'N':
                 dirvec[13] = 1.
-            elif infoline['mode'] == 'ENE':
+            elif infoline['mode'] == 'NNW':
                 dirvec[14] = 1.
-            elif infoline['mode'] == 'NW':
+            elif infoline['mode'] == 'ENE':
                 dirvec[15] = 1.
+            elif infoline['mode'] == 'NW':
+                dirvec[16] = 1.
             else:
                 print "wrong in dir"
         else:
