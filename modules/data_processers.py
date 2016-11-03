@@ -632,7 +632,7 @@ class DataProcesser(object):
                 f.write(the_key+' is '+str(log_dict['tracked'][the_key])+' \n')
             if log_dict['max_dev_bleu'] < log_dict['tracked']['dev_bleu']:
                 f.write('This is a new best model ! \n')
-                log_dict['max_dev_loss'] = log_dict['tracked']['dev_bleu']
+                log_dict['max_dev_bleu'] = log_dict['tracked']['dev_bleu']
                 #
                 # update the tracked_best
                 for the_key in log_dict['tracked']:
