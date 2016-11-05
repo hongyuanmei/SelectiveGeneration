@@ -320,17 +320,6 @@ def train_selgen_eval_angeli(input_train):
         data_process.get_refs(tag_split='dev')
     )
     #
-    bleu_scorer_2 = evaluations.BleuScoreAngeli(
-        {
-            'path_jvm': input_train['path_jvm'],
-            'path_jar': input_train['path_jar'],
-            'max_diff': 5
-        }
-    )
-    bleu_scorer_2.set_refs(
-        data_process.get_refs(tag_split='dev')
-    )
-    #
     f1_computer = evaluations.F1Compute()
     f1_computer.set_golds(
         data_process.get_golds(tag_split='dev')
@@ -417,7 +406,6 @@ def train_selgen_eval_angeli(input_train):
                 )
                 #
                 bleu_scorer.reset_gens()
-                bleu_scorer_2.reset_gens()
                 f1_computer.reset_aligns()
                 #TODO: get the dev loss values
                 sum_costs = 0.0
@@ -444,13 +432,16 @@ def train_selgen_eval_angeli(input_train):
                         beam_search.get_top_target()
                     )
                     bleu_scorer.add_gen(gen_step_dev)
-                    bleu_scorer_2.add_gen(gen_step_dev)
                     #
                     if step_dev % 100 == 99:
                         print "in dev, the step is out of ", step_dev, data_process.lens['dev']
                 #
+                bleu_scorer.set_threshold(0)
                 bleu_score = bleu_scorer.evaluate()
-                bleu_score_2 = bleu_scorer_2.evaluate()
+                #
+                bleu_scorer.set_threshold(5)
+                bleu_score_2 = bleu_scorer.evaluate()
+                #
                 f1_score = f1_computer.evaluate()
                 #
                 log_dict['tracked']['dev_bleu_s'] = round(

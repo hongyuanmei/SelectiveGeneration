@@ -62,7 +62,7 @@ class BleuScoreAngeli(object):
         print "Bleu Score (Gabor Angeli wrapper) built ... "
         self.path_jvm = settings['path_jvm']
         self.path_jar = settings['path_jar']
-        self.max_diff = settings['max_diff']
+        #self.max_diff = settings['max_diff']
         self.djavapath = "-Djava.class.path=%s"%os.path.abspath(
             self.path_jar
         )
@@ -74,12 +74,17 @@ class BleuScoreAngeli(object):
         )
         self.BleuScorer = self.BleuScorerClass()
         self.BleuScorer.setThreshold(
-            numpy.int(self.max_diff)
+            numpy.int(0)
         )
         # int32 causes errors in Angeli code
         self.list_gens = []
         self.list_refs = []
         #
+    #
+    def set_threshold(self, max_diff):
+        self.BleuScorer.setThreshold(
+            numpy.int(max_diff)
+        )
     #
     def reset_gens(self):
         self.list_gens = []
