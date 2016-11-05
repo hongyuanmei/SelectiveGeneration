@@ -264,8 +264,7 @@ class DataProcesser(object):
             print "wrong in bucket20"
         return bucket20vec
     #
-    def getdirmode(self, infoline):
-        #
+    def getdirmode(self, infoline):#
         dirvec = numpy.zeros((18, ), dtype=dtype)
         if infoline['type'] == 'windDir':
             if infoline['mode'] == '':
@@ -307,6 +306,50 @@ class DataProcesser(object):
         else:
             dirvec[-1] = 1.
         return dirvec
+    #
+    def getdirmode_alter(self, infoline):
+        #
+        dirvec = numpy.zeros((17, ), dtype=dtype)
+        if infoline['type'] == 'windDir':
+            if infoline['mode'] == 'S':
+                dirvec[0] = 1.
+            elif infoline['mode'] == 'SW':
+                dirvec[1] = 1.
+            elif infoline['mode'] == 'SSE':
+                dirvec[2] = 1.
+            elif infoline['mode'] == 'WSW':
+                dirvec[3] = 1.
+            elif infoline['mode'] == 'ESE':
+                dirvec[4] = 1.
+            elif infoline['mode'] == 'E':
+                dirvec[5] = 1.
+            elif infoline['mode'] == 'W':
+                dirvec[6] = 1.
+            elif infoline['mode'] == 'SE':
+                dirvec[7] = 1.
+            elif infoline['mode'] == 'NE':
+                dirvec[8] = 1.
+            elif infoline['mode'] == 'SSW':
+                dirvec[9] = 1.
+            elif infoline['mode'] == 'NNE':
+                dirvec[10] = 1.
+            elif infoline['mode'] == 'WNW':
+                dirvec[11] = 1.
+            elif infoline['mode'] == 'N':
+                dirvec[12] = 1.
+            elif infoline['mode'] == 'NNW':
+                dirvec[13] = 1.
+            elif infoline['mode'] == 'ENE':
+                dirvec[14] = 1.
+            elif infoline['mode'] == 'NW':
+                dirvec[15] = 1.
+            else:
+                pass
+                #print "wrong in dir"
+        else:
+            dirvec[-1] = 1.
+        return dirvec
+    #
     #
     def getgust(self, infoline):
         if infoline['type'] == 'gust':
@@ -447,7 +490,8 @@ class DataProcesser(object):
         chillvec = self.getwindchill(infoline)
         speedvec = self.getwindspeed(infoline)
         bucket20vec = self.getbucket20(infoline)
-        dirvec = self.getdirmode(infoline)
+        dirvec = self.getdirmode_alter(infoline)
+        #dirvec = self.getdirmode(infoline)
         gustvec = self.getgust(infoline)
         covervec = self.getcover(infoline)
         precvec = self.getprec(infoline)
