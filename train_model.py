@@ -24,6 +24,7 @@ import modules.models as models
 import modules.optimizers as optimizers
 import modules.controllers as controllers
 import modules.data_processers as data_processers
+import jpype
 
 import run_models
 import datetime
@@ -88,6 +89,18 @@ def main():
         help='Optimizer of training'
     )
     #
+    parser.add_argument(
+        '-pjvm', '--PathJVM', required=False,
+        help='Path to JVM'
+    )
+    parser.add_argument(
+        '-pjar', '--PathJAR', required=False,
+        help='Path to JAR'
+    )
+    parser.add_argument(
+        '-md', '--MaxDiff', required=False,
+        help='Max difference of numerical values in BleuScore'
+    )
     #
     args = parser.parse_args()
     #
@@ -126,6 +139,29 @@ def main():
     else:
         args.Seed = numpy.int32(args.Seed)
     #
+    if args.PathJVM == None:
+        if sys.platform == 'linux2' or sys.platform == 'linux':
+            args.PathJVM = os.path.abspath(
+                jpype.getDefaultJVMPath()
+            )
+        elif sys.platform == 'darwin':
+            args.PathJVM = '/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home/jre/lib/server/libjvm.dylib'
+        else:
+            args.PathJVM = None
+            print "system does not match ... "
+    else:
+        args.PathJVM = os.path.abspath(args.PathJVM)
+    if args.PathJAR == None:
+        args.PathJAR = os.path.abspath(
+            './dist/generation.jar'
+        )
+    else:
+        args.PathJAR = os.path.abspath(args.PathJAR)
+    if args.MaxDiff == None:
+        args.MaxDiff = numpy.int32(5)
+    else:
+        args.MaxDiff = numpy.int32(args.MaxDiff)
+    #
     #
     id_process = os.getpid()
     time_current = datetime.datetime.now().isoformat()
@@ -156,6 +192,7 @@ def main():
     print ("MaxEpoch is : %s" % str(args.MaxEpoch) )
     print ("SizeBatch is : %s" % str(args.SizeBatch) )
     print ("Optimizer is : %s" % args.Optimizer)
+    print ("MaxDiff is : %s" % str(args.MaxDiff) )
     #
     dict_args = {
         'PID': id_process,
@@ -169,7 +206,10 @@ def main():
         'MaxEpoch': args.MaxEpoch,
         'SizeBatch': args.SizeBatch,
         'NumSel': args.NumSel,
-        'Optimizer': args.Optimizer
+        'Optimizer': args.Optimizer,
+        'PathJVM': args.PathJVM,
+        'PathJAR': args.PathJAR,
+        'MaxDiff': args.MaxDiff
     }
     #
     input_train = {
@@ -184,11 +224,15 @@ def main():
         'save_file_path': path_save,
         'log_file': file_log,
         'num_sel': args.NumSel,
-        'args': dict_args
+        'args': dict_args,
+        'path_jvm': args.PathJVM,
+        'path_jar': args.PathJAR,
+        'max_diff': args.MaxDiff
     }
     #
     if args.Model == 'selgen':
-        run_models.train_selgen(input_train)
+        #run_models.train_selgen(input_train)
+        run_models.train_selgen_eval_angeli(input_train)
     else:
         print "Model not cleaned up yet ... "
     #

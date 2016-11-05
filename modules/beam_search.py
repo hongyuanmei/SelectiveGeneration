@@ -84,7 +84,7 @@ class BeamSearchSelGen(object):
     #
 
     def refresh_state(self):
-        print "refreshing the states of beam search ... "
+        #print "refreshing the states of beam search ... "
         self.h_0 = None
         self.c_0 = None
         self.scope_att = None
@@ -223,7 +223,7 @@ class BeamSearchSelGen(object):
         #
 
     def init_beam(self):
-        print "initialize beam ... "
+        #print "initialize beam ... "
         item  = {
             'htm1': numpy.copy(self.h_0),
             'ctm1': numpy.copy(self.c_0),
@@ -313,7 +313,7 @@ class BeamSearchSelGen(object):
         return emb_word, alpha, ht_target, ct_target, probt, log_probt
 
     def search_func(self):
-        print "search for target ... "
+        #print "search for target ... "
         counter, max_counter = 0, 100
         while ((len(self.finish_list)<self.size_beam) and (counter<max_counter) ):
             new_list = []
@@ -397,7 +397,7 @@ class BeamSearchSelGen(object):
         return list(set(self.finish_list[0]['list_idx_att'][:-1]))
 
     def get_top_target_score(self):
-        print "getting top target score as a value ... "
+        #print "getting top target score as a value ... "
         if self.normalize_mode:
             return self.finish_list[0]['norm_cost']
         else:
