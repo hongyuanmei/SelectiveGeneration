@@ -7,6 +7,7 @@ Code base for [Mei et al. NAACL 2016 paper](https://arxiv.org/abs/1509.00838/)
 * [NLTK](http://www.nltk.org/) - Natural Language Toolkit
 * [JPype](http://jpype.sourceforge.net/) - Call Java in Python
 * [JDK](http://www.oracle.com/technetwork/java/javase/downloads) - Java Development Toolkit
+* [ArgParse](https://docs.python.org/2/howto/argparse.html) - Command line parsing in Python
 
 ## Instructions
 Here are the instructions to use the code base.
