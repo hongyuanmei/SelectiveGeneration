@@ -338,7 +338,8 @@ def train_selgen_eval_angeli(input_train):
         'num_sel': input_train['num_sel'],
         'size_batch': input_train['size_batch'],
         'optimizer': input_train['optimizer'],
-        'path_pre_train': input_train['path_pre_train']
+        'path_pre_train': input_train['path_pre_train'],
+        'coef': input_train['coef']
     }
 
     control = controllers.ControlSelGen(

@@ -27,6 +27,7 @@ class SelGen(object):
         print "initializing Sel Gen model ... "
         self.size_batch = settings['size_batch']
         self.num_sel = numpy.float32(settings['num_sel'])
+        self.coef = numpy.float32(settings['coef'])
         #
         if settings['path_pre_train'] == None:
             self.dim_model = settings['dim_model']
@@ -408,7 +409,9 @@ class SelGen(object):
             tensor.max(self.weights_pre_sel, axis=1)
         )
         #
-        self.cost = cost_term + reg_term_1 + reg_term_2
+        reg_term = (reg_term_1 + reg_term_2) * self.coef
+        #
+        self.cost = cost_term + reg_term
         self.grad_params = tensor.grad(
             self.cost, self.params
         )
@@ -441,17 +444,3 @@ class SelGen(object):
         with open(file_save, 'wb') as f:
             pickle.dump(model_dict, f)
 #
-
-'''
-class BeamSearch(object):
-    #
-    def __init__(self, settings):
-        pass
-    #
-    def set_model(self, model_dict):
-        pass
-
-    def
-    #
-    #
-'''

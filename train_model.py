@@ -102,6 +102,11 @@ def main():
         help='Max difference of numerical values in BleuScore'
     )
     #
+    parser.add_argument(
+        '-cf', '--Coef', required=False,
+        help='Coefficient of regularizor'
+    )
+    #
     args = parser.parse_args()
     #
     if args.Model == None:
@@ -138,6 +143,11 @@ def main():
         args.Seed = numpy.int32(12345)
     else:
         args.Seed = numpy.int32(args.Seed)
+    #
+    if args.Coef == None:
+        args.Coef = numpy.float32(1e-6)
+    else:
+        args.Coef = numpy.float32(args.Coef)
     #
     if args.PathJVM == None:
         if sys.platform == 'linux2' or sys.platform == 'linux':
@@ -193,6 +203,7 @@ def main():
     print ("SizeBatch is : %s" % str(args.SizeBatch) )
     print ("Optimizer is : %s" % args.Optimizer)
     print ("MaxDiff is : %s" % str(args.MaxDiff) )
+    print ("Coef is : %s" % str(args.Coef) )
     #
     dict_args = {
         'PID': id_process,
@@ -209,7 +220,8 @@ def main():
         'Optimizer': args.Optimizer,
         'PathJVM': args.PathJVM,
         'PathJAR': args.PathJAR,
-        'MaxDiff': args.MaxDiff
+        'MaxDiff': args.MaxDiff,
+        'Coef': args.Coef
     }
     #
     input_train = {
@@ -227,7 +239,8 @@ def main():
         'args': dict_args,
         'path_jvm': args.PathJVM,
         'path_jar': args.PathJAR,
-        'max_diff': args.MaxDiff
+        'max_diff': args.MaxDiff,
+        'coef': args.Coef
     }
     #
     if args.Model == 'selgen':
