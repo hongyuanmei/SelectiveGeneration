@@ -30,13 +30,13 @@ class DataProcesser(object):
         #
         print "initialize the data processer ... "
         #
-        #self.path_data = os.path.abspath(
-        #    settings['path_data']
-        #) + '/' + 'data.pickle'
         self.path_data = os.path.abspath(
             settings['path_data']
-        ) + '/' + 'data_alter.pickle'
-        # alter matches data and feature processing ... 
+        ) + '/' + 'data.pickle'
+        #self.path_data = os.path.abspath(
+        #    settings['path_data']
+        #) + '/' + 'data_alter.pickle'
+        # alter matches data and feature processing ...
         self.path_stat = os.path.abspath(
             settings['path_data']
         ) + '/' + 'stat.pickle'
@@ -494,8 +494,8 @@ class DataProcesser(object):
         chillvec = self.getwindchill(infoline)
         speedvec = self.getwindspeed(infoline)
         bucket20vec = self.getbucket20(infoline)
-        dirvec = self.getdirmode_alter(infoline)
-        #dirvec = self.getdirmode(infoline)
+        #dirvec = self.getdirmode_alter(infoline)
+        dirvec = self.getdirmode(infoline)
         gustvec = self.getgust(infoline)
         covervec = self.getcover(infoline)
         precvec = self.getprec(infoline)
