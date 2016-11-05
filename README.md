@@ -5,6 +5,7 @@ Code base for [Mei et al. NAACL 2016 paper](https://arxiv.org/abs/1509.00838/)
 * [Anaconda](https://www.continuum.io/) - Anaconda includes all the Python-related dependencies
 * [Theano](http://deeplearning.net/software/theano/) - Computational graphs are built on Theano
 * [NLTK](http://www.nltk.org/) - Natural Language Toolkit
+* [JPype](http://jpype.sourceforge.net/) - Call Java in Python
 * [JDK](http://www.oracle.com/technetwork/java/javase/downloads) - Java Development Toolkit
 
 ## Instructions
