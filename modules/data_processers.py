@@ -30,9 +30,13 @@ class DataProcesser(object):
         #
         print "initialize the data processer ... "
         #
+        #self.path_data = os.path.abspath(
+        #    settings['path_data']
+        #) + '/' + 'data.pickle'
         self.path_data = os.path.abspath(
             settings['path_data']
-        ) + '/' + 'data.pickle'
+        ) + '/' + 'data_alter.pickle'
+        # alter matches data and feature processing ... 
         self.path_stat = os.path.abspath(
             settings['path_data']
         ) + '/' + 'stat.pickle'
