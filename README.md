@@ -5,12 +5,20 @@ Code base for [Mei et al. NAACL 2016 paper](https://arxiv.org/abs/1509.00838/)
 * [Anaconda](https://www.continuum.io/) - Anaconda includes all the Python-related dependencies
 * [Theano](http://deeplearning.net/software/theano/) - Computational graphs are built on Theano
 * [NLTK](http://www.nltk.org/) - Natural Language Toolkit
+* [JDK](http://www.oracle.com/technetwork/java/javase/downloads) - Java Development Toolkit
 
 ## Instructions
-Here are the instructions to use the code base
+Here are the instructions to use the code base.
 
 ### Prepare Data
-Creat a folder called 'data' and copy data files (to be added) to it
+Creat a folder called 'data' and copy data files (to be added) to it. 
+
+### Prepare Eval Code
+Creat a folder called 'dist'. 
+
+Download and compile the Java code from [Gabor Angeli's 2010 EMNLP paper](http://cs.stanford.edu/~angeli/). 
+
+Copy the generation.jar file to the dist folder.
 
 ### Train Models
 To train the model with options, use the command line 
