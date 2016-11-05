@@ -243,6 +243,7 @@ def train_selgen(input_train):
     print "finish training"
     #
 #
+#
 def train_selgen_eval_angeli(input_train):
     '''
     this function is called to train Sel Gen model
@@ -292,6 +293,8 @@ def train_selgen_eval_angeli(input_train):
             'size_batch': input_train['size_batch']
         }
     )
+    #
+    data_process.process_all_info(['train', 'dev'])
     #
     #TODO: build the model
     print "building model ... "
