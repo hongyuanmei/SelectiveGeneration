@@ -110,7 +110,7 @@ def main():
         args.FileData = os.path.abspath('./data')
     #
     if args.TrackPeriod == None:
-        args.TrackPeriod = numpy.int32(100)
+        args.TrackPeriod = numpy.int32(50)
     else:
         args.TrackPeriod = numpy.int32(args.TrackPeriod)
     if args.MaxEpoch == None:
@@ -118,7 +118,7 @@ def main():
     else:
         args.MaxEpoch = numpy.int32(args.MaxEpoch)
     if args.SizeBatch == None:
-        args.SizeBatch = numpy.int32(50)
+        args.SizeBatch = numpy.int32(100)
     else:
         args.SizeBatch = numpy.int32(args.SizeBatch)
     if args.Optimizer == None:

@@ -80,6 +80,11 @@ class DataProcesser(object):
             'dev': int( self.lens['dev']/self.size_batch ),
             'test': int( self.lens['test']/self.size_batch )
         }
+        self.list_idx_batch = {
+            'train': range(self.max_nums['train']),
+            'dev': range(self.max_nums['dev']),
+            'test': range(self.max_nums['test'])
+        }
         #
     #
     #
@@ -107,7 +112,7 @@ class DataProcesser(object):
         #assert(tag=='train')
         print "shuffling training data idx ... "
         # we shuffle idx instead of the real data
-        numpy.random.shuffle(self.list_idx['train'])
+        numpy.random.shuffle(self.list_idx_batch['train'])
 
     #
     #TODO: functions for processing single feature
@@ -526,7 +531,7 @@ class DataProcesser(object):
             self.data_info[tag_split].append(
                 numpy.copy(self.getinfo(data_item) )
             )
-            if idx % 100 == 99 :
+            if idx % 500 == 499 :
                 print "finish processing info : ", idx, tag_split
     #
     #
@@ -539,7 +544,6 @@ class DataProcesser(object):
             #
         #
     #
-
     def process_seq(self):
         #print "getting batch ... "
         #
@@ -550,12 +554,13 @@ class DataProcesser(object):
         self.max_len = -1
         for idx_in_batch, idx_data in enumerate(self.list_idx_data):
             data_item = self.data[self.tag_batch][idx_data]
-            self.seq_info_numpy[:, idx_in_batch, :] = numpy.copy(
-                self.data_info[self.tag_batch][idx_data]
+            self.seq_info_numpy[:, idx_in_batch, :] = self.getinfo(
+                data_item
             )
-            #self.getinfo(
-            #    data_item
+            #numpy.copy(
+            #    self.data_info[self.tag_batch][idx_data]
             #)
+            #
             list_tokens_this_data = data_item['text'].split()
             len_this_data = 0
             for token in list_tokens_this_data:
@@ -599,72 +604,75 @@ class DataProcesser(object):
                 idx_pos, idx_in_batch, :
             ] = self.vocabmat[:, 0]
         #
+        self.data_info[self.tag_batch].append(
+            numpy.copy(self.seq_info_numpy)
+        )
+        self.data_lang[self.tag_batch].append(
+            numpy.copy(self.seq_lang_numpy)
+        )
+        self.data_target[self.tag_batch].append(
+            numpy.copy(self.seq_target_numpy)
+        )
         #
+    #
 
-    def process_data(
+    def process_all_data(self, list_tag_batch):
+        # process all data first, to speed up training
+        self.data_info = {}
+        self.data_lang = {}
+        self.data_target = {}
+        for tag_batch in list_tag_batch:
+            self.tag_batch = tag_batch
+            self.data_info[self.tag_batch] = []
+            self.data_lang[self.tag_batch] = []
+            self.data_target[self.tag_batch] = []
+            for idx_batch_current in range(self.max_nums[self.tag_batch]):
+                self.list_idx_data = [
+                    idx for idx in self.list_idx[self.tag_batch][
+                        idx_batch_current * self.size_batch : (idx_batch_current + 1) * self.size_batch
+                    ]
+                ]
+                self.process_seq()
+                print "finished processing : ", idx_batch_current, tag_batch
+    #
+
+    def process_one_batch(
         self, tag_batch, idx_batch_current=0
     ):
         #
         #print "processing one batch of data ... "
         #
-        self.tag_batch = tag_batch
-        self.list_idx_data = [
-            idx for idx in self.list_idx[self.tag_batch][
-                idx_batch_current * self.size_batch : (idx_batch_current + 1) * self.size_batch
-            ]
-        ]
-        self.process_seq()
+        self.seq_info_numpy = numpy.copy(
+            self.data_info[tag_batch][idx_batch_current]
+        )
+        self.seq_lang_numpy = numpy.copy(
+            self.data_lang[tag_batch][idx_batch_current]
+        )
+        self.seq_target_numpy = numpy.copy(
+            self.data_target[tag_batch][idx_batch_current]
+        )
 
     def process_one_data(
         self, tag_batch, idx_data = 0
     ):
-        self.tag_batch = tag_batch
-        self.list_idx_data = [idx_data]
         #
-        data_item = self.data[self.tag_batch][idx_data]
-        list_tokens_this_data = data_item['text'].split()
-        #
-        self.max_len = -1
-        len_this_data = 0
-        for token in list_tokens_this_data:
-            if token in self.word2ind:
-                len_this_data += 1
-        if len_this_data > self.max_len:
-            self.max_len = len_this_data
-        #
+        idx_batch = numpy.int32( idx_data / self.size_batch )
+        pos_in_batch = numpy.int32( idx_data % self.size_batch )
         self.seq_info_numpy = numpy.copy(
-            self.data_info[self.tag_batch][idx_data]
+            self.data_info[tag_batch][idx_batch][
+                :, pos_in_batch, :
+            ]
         )
-        #numpy.zeros(
-        #    (self.num_info, self.dim_info),
-        #    dtype = dtype
-        #)
-        #
-        #self.seq_info_numpy[:,:] = self.getinfo(data_item)
-        #
-        self.seq_lang_numpy = numpy.zeros(
-            (self.max_len+1, self.dim_lang), dtype = dtype
+        self.seq_lang_numpy = numpy.copy(
+            self.data_lang[tag_batch][idx_batch][
+                :, pos_in_batch, :
+            ]
         )
-        self.seq_target_numpy = numpy.zeros(
-            (self.max_len+1, self.dim_lang), dtype = dtype
+        self.seq_target_numpy = numpy.copy(
+            self.data_target[tag_batch][idx_batch][
+                :, pos_in_batch, :
+            ]
         )
-        #
-        self.seq_lang_numpy[0, :] = self.vocabmat[:, 0]
-        idx_pos = 0
-        for token in list_tokens_this_data:
-            if token in self.word2ind:
-                self.seq_target_numpy[
-                    idx_pos, :
-                ] = self.vocabmat[
-                    :, self.word2ind[token]
-                ]
-                self.seq_lang_numpy[
-                    idx_pos+1, :
-                ] = self.vocabmat[
-                    :, self.word2ind[token]
-                ]
-                idx_pos += 1
-        self.seq_target_numpy[idx_pos, :] = self.vocabmat[:, 0]
         #
         #
 
