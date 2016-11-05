@@ -4,7 +4,6 @@
 
 data/*
 depre/*
-dist/*
 
 *.pyc
 
