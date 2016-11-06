@@ -519,26 +519,6 @@ class DataProcesser(object):
         return numpy.float32(numpy.array(infomat) )
     #
     #
-    def process_info_tag(self, tag_split):
-        self.data_info[tag_split] = []
-        for idx in range(self.lens[tag_split]):
-            data_item = self.data[tag_split][idx]
-            self.data_info[tag_split].append(
-                numpy.copy(self.getinfo(data_item) )
-            )
-            if idx % 100 == 99 :
-                print "finish processing info : ", idx, tag_split
-    #
-    #
-    def process_all_info(self, list_tag_split):
-        # process all the info first, to speed up training
-        print "processing all the info features ... "
-        self.data_info = {}
-        for tag_split in list_tag_split:
-            self.process_info_tag(tag_split)
-            #
-        #
-    #
 
     def process_seq(self):
         #print "getting batch ... "
@@ -550,12 +530,9 @@ class DataProcesser(object):
         self.max_len = -1
         for idx_in_batch, idx_data in enumerate(self.list_idx_data):
             data_item = self.data[self.tag_batch][idx_data]
-            self.seq_info_numpy[:, idx_in_batch, :] = numpy.copy(
-                self.data_info[self.tag_batch][idx_data]
+            self.seq_info_numpy[:, idx_in_batch, :] = self.getinfo(
+                data_item
             )
-            #self.getinfo(
-            #    data_item
-            #)
             list_tokens_this_data = data_item['text'].split()
             len_this_data = 0
             for token in list_tokens_this_data:
@@ -632,15 +609,12 @@ class DataProcesser(object):
         if len_this_data > self.max_len:
             self.max_len = len_this_data
         #
-        self.seq_info_numpy = numpy.copy(
-            self.data_info[self.tag_batch][idx_data]
+        self.seq_info_numpy = numpy.zeros(
+            (self.num_info, self.dim_info),
+            dtype = dtype
         )
-        #numpy.zeros(
-        #    (self.num_info, self.dim_info),
-        #    dtype = dtype
-        #)
         #
-        #self.seq_info_numpy[:,:] = self.getinfo(data_item)
+        self.seq_info_numpy[:,:] = self.getinfo(data_item)
         #
         self.seq_lang_numpy = numpy.zeros(
             (self.max_len+1, self.dim_lang), dtype = dtype
