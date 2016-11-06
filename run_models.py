@@ -294,7 +294,7 @@ def train_selgen_eval_angeli(input_train):
         }
     )
     #
-    data_process.process_all_data(['train', 'dev'])
+    data_process.process_all_info(['train', 'dev'])
     #
     #TODO: build the model
     print "building model ... "
@@ -371,12 +371,8 @@ def train_selgen_eval_angeli(input_train):
             train_start = time.time()
             #print "the step is ", step
             #
-            idx_batch_current = data_process.list_idx_batch[
-                'train'
-            ][step_train]
-            #
-            data_process.process_one_batch(
-                'train', idx_batch_current
+            data_process.process_data(
+                'train', step_train
             )
             #
             #print "training ... "
