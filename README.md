@@ -1,7 +1,7 @@
 # SelectiveGeneration
 Code base for [Mei et al. NAACL 2016 paper](https://arxiv.org/abs/1509.00838/)
 
-## This codebase is still under-tested, so I share my original (uncleaned) code and data through this Google drive: 
+## This codebase is revised from my original version and still under-tested, so I'd share my original code and data files through this Google drive: 
 https://drive.google.com/drive/folders/0BwqmV0EcoUc8OHpLd3NaU19Hb0E?usp=sharing 
 
 ## Dependencies
